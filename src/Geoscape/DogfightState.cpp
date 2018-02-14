@@ -1093,7 +1093,7 @@ void DogfightState::update()
 					mission->start(mission->getRules().getWave(0).spawnTimer); // fixed delay for first scout
 					_game->getSavedGame()->getAlienMissions().push_back(mission);
 
-					GeoscapeNewAlienMissionEvent e(mission);
+					GeoscapeGameEvent::NewAlienMission e(mission);
 					State::getGamePtr()->onGameEvent(&e);
 				}
 			}
@@ -1149,6 +1149,10 @@ void DogfightState::update()
 				if (!_state->getGlobe()->insideLand(_ufo->getLongitude(), _ufo->getLatitude()))
 				{
 					_ufo->setStatus(Ufo::DESTROYED);
+
+					GeoscapeGameEvent::UfoStatusChanged e(_ufo);
+					State::getGamePtr()->onGameEvent(&e);
+
 					_destroyUfo = true;
 				}
 				else

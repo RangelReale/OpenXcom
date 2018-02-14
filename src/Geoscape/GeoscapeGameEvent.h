@@ -19,40 +19,46 @@
  */
 #include "../Engine/GameEvent.h"
 #include <string>
-#include <sstream>
 
 namespace OpenXcom
 {
 
-class TextButton;
-class Window;
-class Text;
+class Ufo;
+class AlienMission;
+
+namespace GeoscapeGameEvent
+{
 
 /**
- * Notifies the player when a targeted UFO
- * goes outside radar range.
  */
-class GeoscapeNewAlienMissionEvent : public GameEvent
+class NewAlienMission : public GameEvent
 {
 private:
 	AlienMission *_alienmission;
 public:
 	/// Creates the Ufo Lost state.
-	GeoscapeNewAlienMissionEvent(AlienMission *alienmission) : GameEvent(ST_GEOSCAPE_NEWALIENMISSION), _alienmission(alienmission) {}
+	NewAlienMission(AlienMission *alienmission) : GameEvent(ST_GEOSCAPE_NEWALIENMISSION), _alienmission(alienmission) {}
 
 	AlienMission *getAlienMission() const { return _alienmission; }
 
 	/// Gets the event description
-	std::string description() const 
-	{ 
-		std::stringstream d;
-		d << "{GEOSCAPE} New alien mission";
-		d << " ID=" << _alienmission->getId();
-		d << " REGION=" << _alienmission->getRegion();
-		d << " RACE=" << _alienmission->getRace();
-		d << " RULE_TYPE=" << _alienmission->getRules().getType();
-		return d.str();
-	}
+	std::string description() const;
 };
+
+class UfoStatusChanged : public GameEvent
+{
+private:
+	Ufo *_ufo;
+public:
+	/// Creates the Ufo Lost state.
+	UfoStatusChanged(Ufo *ufo) : GameEvent(ST_GEOSCAPE_UFOSTATECHANGED), _ufo(ufo) {}
+
+	Ufo *getUfo() const { return _ufo; }
+
+	/// Gets the event description
+	std::string description() const;
+};
+
+}
 
 }

@@ -769,6 +769,9 @@ void GeoscapeState::time5Seconds()
 			{
 				(*i)->setDetected(false);
 				(*i)->setStatus(Ufo::DESTROYED);
+
+				GeoscapeGameEvent::UfoStatusChanged e(*i);
+				State::getGamePtr()->onGameEvent(&e);
 			}
 			break;
 		case Ufo::DESTROYED:
@@ -1215,6 +1218,9 @@ struct expireCrashedUfo: public std::unary_function<Ufo*, void>
 			}
 			// Marked expired UFOs for removal.
 			ufo->setStatus(Ufo::DESTROYED);
+
+			GeoscapeGameEvent::UfoStatusChanged e(ufo);
+			State::getGamePtr()->onGameEvent(&e);
 		}
 	}
 };
@@ -1521,7 +1527,7 @@ void GenerateSupplyMission::operator()(const AlienBase *base) const
 			mission->start();
 			_save.getAlienMissions().push_back(mission);
 
-			GeoscapeNewAlienMissionEvent e(mission);
+			GeoscapeGameEvent::NewAlienMission e(mission);
 			State::getGamePtr()->onGameEvent(&e);
 		}
 	}
@@ -2226,6 +2232,9 @@ void GeoscapeState::handleBaseDefense(Base *base, Ufo *ufo)
 	// Whatever happens in the base defense, the UFO has finished its duty
 	ufo->setStatus(Ufo::DESTROYED);
 
+	GeoscapeGameEvent::UfoStatusChanged e(ufo);
+	State::getGamePtr()->onGameEvent(&e);
+
 	if (base->getAvailableSoldiers(true) > 0 || !base->getVehicles()->empty())
 	{
 		SavedBattleGame *bgame = new SavedBattleGame();
@@ -2645,7 +2654,7 @@ bool GeoscapeState::processCommand(RuleMissionScript *command)
 		strategy.removeMission(targetRegion, missionType);
 	}
 
-	GeoscapeNewAlienMissionEvent e(mission);
+	GeoscapeGameEvent::NewAlienMission e(mission);
 	State::getGamePtr()->onGameEvent(&e);
 
 	// we did it, we can go home now.

@@ -43,6 +43,7 @@
 #include <assert.h>
 #include <algorithm>
 #include "../Mod/AlienDeployment.h"
+#include "../Geoscape/GeoscapeGameEvent.h"
 
 namespace OpenXcom
 {
@@ -176,6 +177,9 @@ void AlienMission::think(Game &engine, const Globe &globe)
 	{
 		//Some missions may not spawn a UFO!
 		game.getUfos()->push_back(ufo);
+
+		GeoscapeGameEvent::UfoStatusChanged e(ufo);
+		State::getGamePtr()->onGameEvent(&e);
 	}
 	else if ((mod.getDeployment(wave.ufoType) && !mod.getUfo(wave.ufoType) && mod.getDeployment(wave.ufoType)->getMarkerName() != "") // a mission site that we want to spawn directly
 			|| (_rule.getObjective() == OBJECTIVE_SITE && wave.objective))																		// or we want to spawn one at random according to our terrain
@@ -436,6 +440,10 @@ void AlienMission::ufoReachedWaypoint(Ufo &ufo, Game &engine, const Globe &globe
 	{
 		ufo.setDetected(false);
 		ufo.setStatus(Ufo::DESTROYED);
+
+		GeoscapeGameEvent::UfoStatusChanged e(&ufo);
+		State::getGamePtr()->onGameEvent(&e);
+
 		return;
 	}
 	ufo.setAltitude(trajectory.getAltitude(nextWaypoint));
@@ -464,6 +472,9 @@ void AlienMission::ufoReachedWaypoint(Ufo &ufo, Game &engine, const Globe &globe
 			// Remove UFO, replace with MissionSite.
 			addScore(ufo.getLongitude(), ufo.getLatitude(), game);
 			ufo.setStatus(Ufo::DESTROYED);
+
+			GeoscapeGameEvent::UfoStatusChanged e(&ufo);
+			State::getGamePtr()->onGameEvent(&e);
 
 			MissionArea area = regionRules.getMissionZones().at(trajectory.getZone(curWaypoint)).areas.at(_missionSiteZone);
 			Texture *texture = mod.getGlobe()->getTexture(area.texture);
@@ -509,6 +520,10 @@ void AlienMission::ufoReachedWaypoint(Ufo &ufo, Game &engine, const Globe &globe
 			if (found == game.getBases()->end())
 			{
 				ufo.setStatus(Ufo::DESTROYED);
+
+				GeoscapeGameEvent::UfoStatusChanged e(&ufo);
+				State::getGamePtr()->onGameEvent(&e);
+
 				// Only spawn mission if the base is still there.
 				return;
 			}
@@ -584,10 +599,16 @@ void AlienMission::ufoLifting(Ufo &ufo, SavedGame &game)
 		}
 		break;
 	case Ufo::CRASHED:
+	{
 		// Mission expired
 		ufo.setDetected(false);
 		ufo.setStatus(Ufo::DESTROYED);
+
+		GeoscapeGameEvent::UfoStatusChanged e(&ufo);
+		State::getGamePtr()->onGameEvent(&e);
+
 		break;
+	}
 	case Ufo::DESTROYED:
 		assert(0 && "UFO can't fly!");
 		break;

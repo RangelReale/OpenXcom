@@ -176,6 +176,7 @@ set ( geoscape_src
   Geoscape/TargetInfoState.cpp
   Geoscape/UfoDetectedState.cpp
   Geoscape/UfoLostState.cpp
+  Geoscape/GeoscapeGameEvent.cpp
 )
 
 set ( interface_src

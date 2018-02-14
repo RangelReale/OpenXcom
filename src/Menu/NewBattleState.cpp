@@ -52,6 +52,7 @@
 #include "../Engine/CrossPlatform.h"
 #include "../Mod/RuleAlienMission.h"
 #include "../Mod/RuleGlobe.h"
+#include "../Geoscape/GeoscapeGameEvent.h"
 
 namespace OpenXcom
 {
@@ -507,6 +508,9 @@ void NewBattleState::btnOkClick(Action *)
 			u->setStatus(Ufo::CRASHED);
 			bgame->setMissionType("STR_UFO_CRASH_RECOVERY");
 		}
+		GeoscapeGameEvent::UfoStatusChanged e(u);
+		State::getGamePtr()->onGameEvent(&e);
+
 		_game->getSavedGame()->getUfos()->push_back(u);
 	}
 	// mission site
