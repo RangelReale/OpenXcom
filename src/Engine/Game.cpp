@@ -38,6 +38,7 @@
 #include "CrossPlatform.h"
 #include "FileMap.h"
 #include "../Menu/TestState.h"
+#include "GameEvent.h"
 
 namespace OpenXcom
 {
@@ -658,6 +659,12 @@ void Game::initAudio()
 		Log(LOG_INFO) << "SDL_mixer initialized successfully.";
 		setVolume(Options::soundVolume, Options::musicVolume, Options::uiVolume);
 	}
+}
+
+/// Notify of a game event
+void Game::onGameEvent(GameEvent *event)
+{
+	Log(LOG_DEBUG) << "[GAME EVENT] " << event->type() << ": " << event->description();
 }
 
 }

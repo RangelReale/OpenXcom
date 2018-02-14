@@ -397,7 +397,7 @@ if ( MSVC )
 endif ()
 
 if ( WIN32 )
-  set ( application_type WIN32 )
+#  set ( application_type WIN32 )
 endif ()
 
 set ( openxcom_src ${root_src} ${basescape_src} ${battlescape_src} ${engine_src} ${geoscape_src} ${interface_src} ${menu_src} ${mod_src} ${savegame_src} ${ufopedia_src} )
@@ -445,7 +445,7 @@ if ( WIN32 )
     set_target_properties ( openxcom
       PROPERTIES PREFIX ../ )
   endif ()
-  set ( system_libs ${basic_windows_libs} SDLmain ${static_flags} )
+  set ( system_libs ${basic_windows_libs} ${static_flags} )
 endif ()
 
 # backtrace(3) requires libexecinfo on some *BSD systems

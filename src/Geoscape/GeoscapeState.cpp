@@ -104,6 +104,7 @@
 #include "../Mod/AlienDeployment.h"
 #include "../Mod/RuleInterface.h"
 #include "../fmath.h"
+#include "GeoscapeGameEvent.h"
 
 namespace OpenXcom
 {
@@ -1519,6 +1520,9 @@ void GenerateSupplyMission::operator()(const AlienBase *base) const
 			mission->setAlienBase(base);
 			mission->start();
 			_save.getAlienMissions().push_back(mission);
+
+			GeoscapeNewAlienMissionEvent e(mission);
+			State::getGamePtr()->onGameEvent(&e);
 		}
 	}
 	else if (base->getDeployment()->getGenMissionType() != "")
@@ -2640,6 +2644,9 @@ bool GeoscapeState::processCommand(RuleMissionScript *command)
 	{
 		strategy.removeMission(targetRegion, missionType);
 	}
+
+	GeoscapeNewAlienMissionEvent e(mission);
+	State::getGamePtr()->onGameEvent(&e);
 
 	// we did it, we can go home now.
 	return true;

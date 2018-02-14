@@ -31,6 +31,7 @@ class Language;
 class SavedGame;
 class Mod;
 class FpsCounter;
+class GameEvent;
 
 /**
  * The core of the game engine, manages the game's entire contents and structure.
@@ -102,6 +103,8 @@ public:
 	void defaultLanguage();
 	/// Sets up the audio.
 	void initAudio();
+	/// Notify of a game event
+	void onGameEvent(GameEvent *event);
 };
 
 }

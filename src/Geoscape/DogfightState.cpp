@@ -48,6 +48,7 @@
 #include "../Savegame/AlienMission.h"
 #include "DogfightErrorState.h"
 #include "../Mod/RuleInterface.h"
+#include "GeoscapeGameEvent.h"
 
 namespace OpenXcom
 {
@@ -1091,6 +1092,9 @@ void DogfightState::update()
 					mission->setRace(_ufo->getAlienRace());
 					mission->start(mission->getRules().getWave(0).spawnTimer); // fixed delay for first scout
 					_game->getSavedGame()->getAlienMissions().push_back(mission);
+
+					GeoscapeNewAlienMissionEvent e(mission);
+					State::getGamePtr()->onGameEvent(&e);
 				}
 			}
 
