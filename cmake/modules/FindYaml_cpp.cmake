@@ -84,11 +84,40 @@ if ( APPLE )
   endif ()
 endif ()
 
+if ( WIN32 )
+    # Find separate debug library
+    FIND_LIBRARY(YAMLCPP_LIBRARY_DEBUG 
+      NAMES yaml-cpp
+      HINTS
+      ${PC_YAMLCPP_LIBDIR}
+      ${PC_YAMLCPP_LIBRARY_DIRS}
+      $ENV{YAMLCPPDIR}
+      PATH_SUFFIXES lib64 lib
+      PATHS
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+    )
+endif()
+
 SET(YAMLCPP_FOUND "NO")
 
 IF(YAMLCPP_LIBRARY AND YAMLCPP_INCLUDE_DIR)
   SET(YAMLCPP_FOUND "YES")
   SET(YAMLCPP_INCLUDE_DIR "${YAMLCPP_INCLUDE_DIR};${YAMLCPP_INCLUDE_DIR}/..")
+  
+  if (WIN32 AND YAMLCPP_LIBRARY_DEBUG)
+        SET (YAMLCPP_LIBRARY
+            debug ${YAMLCPP_LIBRARY_DEBUG}
+            optimized ${YAMLCPP_LIBRARY}
+        )
+  endif()
+  
 ENDIF(YAMLCPP_LIBRARY AND YAMLCPP_INCLUDE_DIR)
 
 set ( YAMLCPP_LIBRARY_DIRS "" )

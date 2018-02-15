@@ -107,6 +107,21 @@ FIND_LIBRARY(SDL_LIBRARY_TEMP
   /opt
 )
 
+if (WIN32)
+    # Find debug version
+    FIND_LIBRARY(SDL_LIBRARY_TEMP_DEBUG
+      NAMES SDL SDL-1.1
+      HINTS
+      $ENV{SDLDIR}
+      PATH_SUFFIXES lib64 lib
+      PATHS
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+    )
+endif()
+
 #MESSAGE("SDL_LIBRARY_TEMP is ${SDL_LIBRARY_TEMP}")
 
 IF(NOT SDL_BUILDING_LIBRARY)
@@ -126,8 +141,41 @@ IF(NOT SDL_BUILDING_LIBRARY)
       /opt/csw
       /opt
     )
+    
+    if (WIN32)
+        # Find debug version
+        FIND_LIBRARY(SDLMAIN_LIBRARY_DEBUG
+          NAMES SDLmain SDLmain-1.1
+          HINTS
+          $ENV{SDLDIR}
+          PATH_SUFFIXES lib64 lib
+          PATHS
+          /sw
+          /opt/local
+          /opt/csw
+          /opt
+        )
+    endif()
   ENDIF(NOT ${SDL_INCLUDE_DIR} MATCHES ".framework")
 ENDIF(NOT SDL_BUILDING_LIBRARY)
+
+if (WIN32)
+    if (SDL_LIBRARY_TEMP AND SDL_LIBRARY_TEMP_DEBUG)
+        # Debug version
+        SET (SDL_LIBRARY_TEMP
+            debug ${SDL_LIBRARY_TEMP_DEBUG}
+            optimized ${SDL_LIBRARY_TEMP}
+        )
+    endif()
+    
+    if (SDLMAIN_LIBRARY AND SDLMAIN_LIBRARY_DEBUG)
+        # Debug version
+        SET (SDLMAIN_LIBRARY
+            debug ${SDLMAIN_LIBRARY_DEBUG}
+            optimized ${SDLMAIN_LIBRARY}
+        )
+    endif()
+endif()
 
 # SDL may require threads on your system.
 # The Apple build may not need an explicit flag because one of the 
@@ -143,6 +191,8 @@ ENDIF(NOT APPLE)
 IF(MINGW)
   SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
+
+#unset(SDL_LIBRARY_TEMP CACHE)
 
 SET(SDL_FOUND "NO")
 IF(SDL_LIBRARY_TEMP)
@@ -178,7 +228,7 @@ IF(SDL_LIBRARY_TEMP)
   # Set the final string here so the GUI reflects the final state.
   SET(SDL_LIBRARY ${SDL_LIBRARY_TEMP} CACHE STRING "Where the SDL Library can be found")
   # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
-  SET(SDL_LIBRARY_TEMP "${SDL_LIBRARY_TEMP}" CACHE INTERNAL "")
+  #SET(SDL_LIBRARY_TEMP "${SDL_LIBRARY_TEMP}" CACHE INTERNAL "")
 
   SET(SDL_FOUND "YES")
 ENDIF(SDL_LIBRARY_TEMP)
@@ -244,10 +294,32 @@ macro ( FindSDL_component _component )
     /opt/csw
     /opt
     )
+    
+  if (WIN32)
+      find_library ( SDL${UPPERCOMPONENT}_LIBRARY_DEBUG
+        NAMES SDL_${_component}
+        HINTS
+        $ENV{SDL${UPPERCOMPONENT}DIR}
+        $ENV{SDLDIR}
+        PATH_SUFFIXES lib64 lib
+        PATHS
+        /sw
+        /opt/local
+        /opt/csw
+        /opt
+        )  
+  endif()
 
   if ( SDL${UPPERCOMPONENT}_LIBRARY AND SDL${UPPERCOMPONENT}_INCLUDE_DIR )
     set ( SDL${UPPERCOMPONENT}_FOUND "YES" )
     set ( SDL${UPPERCOMPONENT}_MAINHEADER "${SDL${UPPERCOMPONENT}_INCLUDE_DIR}/${SDL_header_name}" )
+
+    if (WIN32 AND SDL${UPPERCOMPONENT}_LIBRARY_DEBUG)
+        SET (SDL${UPPERCOMPONENT}_LIBRARY
+            debug "${SDL${UPPERCOMPONENT}_LIBRARY_DEBUG}"
+            optimized "${SDL${UPPERCOMPONENT}_LIBRARY}"
+        )
+    endif()
 
     find_sdl_version ( "${SDL${UPPERCOMPONENT}_MAINHEADER}"
       "${SDL_COMPONENT_NAME}"
