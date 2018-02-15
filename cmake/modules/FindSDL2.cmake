@@ -192,8 +192,6 @@ IF(MINGW)
   SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
 
-#unset(SDL_LIBRARY_TEMP CACHE)
-
 SET(SDL_FOUND "NO")
 IF(SDL_LIBRARY_TEMP)
   # For SDLmain
@@ -227,8 +225,6 @@ IF(SDL_LIBRARY_TEMP)
 
   # Set the final string here so the GUI reflects the final state.
   SET(SDL_LIBRARY ${SDL_LIBRARY_TEMP} CACHE STRING "Where the SDL Library can be found")
-  # Set the temp variable to INTERNAL so it is not seen in the CMake GUI
-  #SET(SDL_LIBRARY_TEMP "${SDL_LIBRARY_TEMP}" CACHE INTERNAL "")
 
   SET(SDL_FOUND "YES")
 ENDIF(SDL_LIBRARY_TEMP)
