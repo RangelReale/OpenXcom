@@ -45,7 +45,7 @@ private:
 	ToggleTextButton *_btnShowOnlyNew;
 	TextEdit *_btnQuickSearch;
 	Window *_window;
-	Text *_txtTitle, *_txtItem, *_txtCategory;
+	Text *_txtTitle, *_txtItem, *_txtCategory, *_txtOwn;
 	TextList *_lstManufacture;
 	ComboBox *_cbxCategory;
 	ComboBox *_cbxFilter;
